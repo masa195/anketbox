@@ -416,16 +416,15 @@ function initTabs() {
     responder: document.getElementById('responder'),
     responses: document.getElementById('responses'),
   };
-  tabs.forEach(btn => {
-    btn.addEventListener('click', () => {
-      tabs.forEach(b => { b.classList.remove('is-active'); b.setAttribute('aria-selected','false'); });
-      btn.classList.add('is-active'); btn.setAttribute('aria-selected','true');
-      const key = btn.getAttribute('data-tab');
-      Object.entries(panels).forEach(([k, el]) => {
-        if (k === key) el.classList.remove('is-hidden'); else el.classList.add('is-hidden');
-      });
-    });
-  });
+  function activate(key){
+    tabs.forEach(b => { b.classList.remove('is-active'); b.setAttribute('aria-selected','false'); });
+    const current = tabs.find(t=> t.getAttribute('data-tab')===key);
+    if(current){ current.classList.add('is-active'); current.setAttribute('aria-selected','true'); }
+    Object.entries(panels).forEach(([k, el]) => { if (k === key) el.classList.remove('is-hidden'); else el.classList.add('is-hidden'); });
+  }
+  tabs.forEach(a => a.addEventListener('click', (e)=>{ const key=a.getAttribute('data-tab'); activate(key); }));
+  window.addEventListener('hashchange', ()=>{ const key = location.hash.replace('#','') || 'designer'; activate(key); });
+  const initial = location.hash.replace('#','') || 'designer'; activate(initial);
 }
 
 

@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>anketbox - 回答</title>
+  <link rel="stylesheet" href="style.css">
+  <meta name="color-scheme" content="light dark">
+</head>
+<body>
+  <header class="app-header container">
+    <div class="brand">
+      <div class="logo">🗳️</div>
+      <h1>回答</h1>
+    </div>
+    <a class="tab" href="./index.html">← トップへ</a>
+  </header>
+  <main class="container">
+    <div class="card stack">
+      <label>回答者名
+        <input id="respondent" placeholder="任意"/>
+      </label>
+      <form id="answerForm"></form>
+      <div class="row end">
+        <button id="submitAnswerBtn" class="primary" type="button">回答を送信</button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    "use strict";
+    const STORAGE_SURVEY = "anketbox:survey";
+    const STORAGE_RESPONSES = "anketbox:responses";
+    const respondentInput = document.getElementById("respondent");
+    const answerForm = document.getElementById("answerForm");
+    const submitAnswerBtn = document.getElementById("submitAnswerBtn");
+
+    function loadJson(key, fallback){ try{ const r=localStorage.getItem(key); return r?JSON.parse(r):fallback }catch{ return fallback } }
+    function saveJson(key, value){ localStorage.setItem(key, JSON.stringify(value)); }
+    function create(tag, attrs={}, children=[]) { const el=document.createElement(tag); Object.entries(attrs).forEach(([k,v])=>{ if(k==="text") el.textContent=v; else if(k==="className") el.className=v; else if(k.startsWith("on")&&typeof v==="function") el.addEventListener(k.slice(2).toLowerCase(), v); else if(v!==undefined && v!==null) el.setAttribute(k, String(v)); }); children.forEach(c=>el.appendChild(c)); return el; }
+
+    function render() {
+      const survey = loadJson(STORAGE_SURVEY, null);
+      answerForm.innerHTML = "";
+      if (!survey) {
+        answerForm.appendChild(create("div", {text: "アンケート設計がありません。（トップから作成してください）"}));
+        return;
+      }
+      survey.questions.forEach((q,i)=>{
+        if(q.type==="single"||q.type==="multi"){
+          const fs=create("fieldset");
+          fs.appendChild(create("legend", {text: q.label + (q.required?" *":"")}));
+          (q.options||[]).forEach(opt=>{
+            fs.appendChild(create("label", {className:"inline"}, [
+              create("input", {type: q.type==="single"?"radio":"checkbox", name: `q_${i}`, value: opt}),
+              document.createTextNode(opt)
+            ]));
+          });
+          answerForm.appendChild(fs);
+        } else {
+          const control = q.type==="textarea" ? create("textarea", {id:`q_${i}`}) : create("input", {id:`q_${i}`});
+          if(q.required) control.setAttribute("required","true");
+          answerForm.appendChild(create("label", {}, [document.createTextNode(q.label + (q.required?" *":"")), control]));
+        }
+      });
+    }
+
+    submitAnswerBtn.addEventListener("click", ()=>{
+      const survey = loadJson(STORAGE_SURVEY, null);
+      if(!survey){ alert("アンケート設計がありません。"); return; }
+      try{
+        const answers = survey.questions.map((q,i)=>{
+          if(q.type==="single"){
+            const c = answerForm.querySelector(`input[name="q_${i}"]:checked`);
+            const v = c?c.value:""; if(q.required && !v) throw new Error(`${q.label} は必須です`); return v;
+          } else if(q.type==="multi"){
+            const a = Array.from(answerForm.querySelectorAll(`input[name="q_${i}"]:checked`)).map(el=>el.value);
+            if(q.required && a.length===0) throw new Error(`${q.label} は必須です`); return a.join(";");
+          } else {
+            const el = document.getElementById(`q_${i}`); const v = el?el.value:""; if(q.required && !v.trim()) throw new Error(`${q.label} は必須です`); return v;
+          }
+        });
+        const rec = { respondent: respondentInput.value||"", answers, createdAt: Date.now() };
+        const list = loadJson(STORAGE_RESPONSES, []); list.push(rec); saveJson(STORAGE_RESPONSES, list);
+        alert("回答を保存しました。ありがとうございました。");
+        answerForm.reset(); respondentInput.value="";
+      } catch(e){ alert(e.message||String(e)); }
+    });
+
+    render();
+  </script>
+</body>
+</html>
+

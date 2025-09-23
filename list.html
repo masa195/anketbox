@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>anketbox - 回答一覧</title>
+  <link rel="stylesheet" href="style.css">
+  <meta name="color-scheme" content="light dark">
+</head>
+<body>
+  <header class="app-header container">
+    <div class="brand">
+      <div class="logo">🗳️</div>
+      <h1>回答一覧</h1>
+    </div>
+    <a class="tab" href="./index.html">← トップへ</a>
+  </header>
+  <main class="container">
+    <div class="card stack">
+      <div class="row end">
+        <button id="exportCsvBtn" type="button">CSV エクスポート</button>
+        <button id="clearResponsesBtn" class="ghost" type="button">回答を全削除</button>
+      </div>
+      <div class="scroll">
+        <table id="responsesTable">
+          <thead></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+  <script>
+    "use strict";
+    const STORAGE_SURVEY = "anketbox:survey";
+    const STORAGE_RESPONSES = "anketbox:responses";
+    const exportCsvBtn = document.getElementById("exportCsvBtn");
+    const clearResponsesBtn = document.getElementById("clearResponsesBtn");
+    const responsesTable = document.getElementById("responsesTable");
+
+    function loadJson(key, fallback){ try{ const r=localStorage.getItem(key); return r?JSON.parse(r):fallback }catch{ return fallback } }
+    function saveJson(key, value){ localStorage.setItem(key, JSON.stringify(value)); }
+    function el(tag, attrs={}, children=[]) { const e=document.createElement(tag); Object.entries(attrs).forEach(([k,v])=>{ if(k==="text") e.textContent=v; else if(k==="className") e.className=v; else if(v!==undefined && v!==null) e.setAttribute(k,String(v)); }); children.forEach(c=>e.appendChild(c)); return e; }
+
+    function renderTable(){
+      const survey = loadJson(STORAGE_SURVEY, null);
+      const responses = loadJson(STORAGE_RESPONSES, []);
+      const thead = responsesTable.querySelector('thead');
+      const tbody = responsesTable.querySelector('tbody');
+      thead.innerHTML=''; tbody.innerHTML='';
+      if(!survey){ thead.appendChild(el('tr',{},[el('th',{text:'アンケート未設定'})])); return; }
+      const headers = ['回答者', ...survey.questions.map(q=>q.label)];
+      const trh = el('tr'); headers.forEach(h=>trh.appendChild(el('th',{text:h}))); thead.appendChild(trh);
+      responses.forEach(r=>{
+        const tr = el('tr');
+        [r.respondent, ...r.answers].forEach(c=> tr.appendChild(el('td',{text: c ?? ''})) );
+        tbody.appendChild(tr);
+      });
+    }
+
+    exportCsvBtn.addEventListener('click', ()=>{
+      const survey = loadJson(STORAGE_SURVEY, null);
+      const responses = loadJson(STORAGE_RESPONSES, []);
+      if(!survey){ alert('アンケート設計がありません。'); return; }
+      const headers = ["respondent", ...survey.questions.map((q)=> q.label)];
+      const rows = responses.map((r)=> [r.respondent, ...r.answers]);
+      const csv = [headers, ...rows].map(cols=> cols.map(csvEscape).join(',')).join('\r\n');
+      const blob = new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='responses.csv'; a.click(); URL.revokeObjectURL(url);
+    });
+
+    clearResponsesBtn.addEventListener('click', ()=>{
+      if(!confirm('回答を全削除しますか？')) return;
+      saveJson(STORAGE_RESPONSES, []); renderTable();
+    });
+
+    function csvEscape(v){ const s=v==null?"":String(v); return /[",\n]/.test(s) ? '"'+s.replaceAll('"','""')+'"' : s; }
+
+    renderTable();
+  </script>
+</body>
+</html>
+

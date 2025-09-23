@@ -18,6 +18,8 @@ table{width:100%;border-collapse:collapse;font-size:14px} th,td{padding:8px;bord
 
 .q-list li{display:flex;gap:8px;align-items:center}
 .q-list .handle{cursor:grab;color:var(--muted)}
+.q-list li.drag-over{outline:2px dashed var(--primary)}
+.q-list li.dragging{opacity:.6}
 .file-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px dashed var(--border);border-radius:8px;color:var(--muted)}
 
 /* anketbox styles */

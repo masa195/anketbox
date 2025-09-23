@@ -65,7 +65,12 @@ let draftQuestions = [];
 function renderQuestionList() {
   questionList.innerHTML = "";
   draftQuestions.forEach((q, idx) => {
-    const li = createElement("li", { class: "q-item" });
+    const li = createElement("li", { class: "q-item", draggable: "true", "data-index": String(idx) });
+    li.addEventListener("dragstart", onDragStart);
+    li.addEventListener("dragover", onDragOver);
+    li.addEventListener("dragleave", onDragLeave);
+    li.addEventListener("drop", onDrop);
+    li.addEventListener("dragend", onDragEnd);
     const handle = createElement("span", { class: "handle", text: "↕" });
     const labelInput = createElement("input", {
       value: q.label,
@@ -318,6 +323,42 @@ function move(index, delta) {
 function removeAt(index) {
   draftQuestions.splice(index, 1);
   renderQuestionList();
+}
+
+// DnD logic
+let dragFromIndex = null;
+function onDragStart(e) {
+  const li = e.currentTarget;
+  dragFromIndex = Number(li.getAttribute("data-index"));
+  li.classList.add("dragging");
+  try { e.dataTransfer.setData("text/plain", String(dragFromIndex)); } catch {}
+  e.dataTransfer.effectAllowed = "move";
+}
+function onDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = "move";
+  const li = e.currentTarget;
+  li.classList.add("drag-over");
+}
+function onDragLeave(e) {
+  const li = e.currentTarget;
+  li.classList.remove("drag-over");
+}
+function onDrop(e) {
+  e.preventDefault();
+  const li = e.currentTarget;
+  li.classList.remove("drag-over");
+  const toIndex = Number(li.getAttribute("data-index"));
+  if (dragFromIndex == null || isNaN(toIndex)) return;
+  if (toIndex === dragFromIndex) return;
+  const [moved] = draftQuestions.splice(dragFromIndex, 1);
+  draftQuestions.splice(toIndex, 0, moved);
+  dragFromIndex = null;
+  renderQuestionList();
+}
+function onDragEnd(e) {
+  const li = e.currentTarget;
+  li.classList.remove("dragging");
 }
 
 // add new question

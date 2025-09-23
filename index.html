@@ -18,11 +18,28 @@
         <label>アンケート名
           <input id="surveyName" placeholder="例: 顧客満足度 2025"/>
         </label>
-        <div class="row">
+        <div class="row wrap">
           <input id="newQuestion" placeholder="質問を入力"/>
+          <select id="newType">
+            <option value="text">短文</option>
+            <option value="textarea">長文</option>
+            <option value="single">単一選択</option>
+            <option value="multi">複数選択</option>
+          </select>
+          <label class="inline"><input type="checkbox" id="newRequired">必須</label>
+        </div>
+        <div class="row">
+          <input id="newOptions" placeholder="選択肢（カンマ区切り）"/>
           <button id="addQuestionBtn">質問を追加</button>
         </div>
-        <ol id="questionList"></ol>
+        <ol id="questionList" class="q-list"></ol>
+        <div class="row gap">
+          <button id="jsonExportBtn" type="button">JSON エクスポート</button>
+          <label class="file-btn">
+            JSON インポート
+            <input id="jsonImportInput" type="file" accept="application/json" hidden>
+          </label>
+        </div>
         <div class="row end">
           <button id="saveSurveyBtn" class="primary">設計を保存</button>
           <button id="clearSurveyBtn" class="ghost">設計をリセット</button>
@@ -61,64 +78,6 @@
   </main>
 
   <script src="app.js"></script>
-  
-</body>
-</html>
 
-<!doctype html>
-<html lang= ja>
-<head>
-  <meta charset=utf-8>
-  <meta name=viewport content=width=device-width initial-scale=1>
-  <title>anketbox</title>
-  <link rel=stylesheet href=style.css>
-</head>
-<body>
-  <header class=container>
-    <h1>anketbox</h1>
-  </header>
-  <main class=container>
-    <section id=designer>
-      <h2>アンケート設計</h2>
-      <div class=card>
-        <label>アンケート名<input id=surveyName placeholder=例: 顧客満足度 2025/></label>
-        <div class=row>
-          <input id=newQuestion placeholder=質問を入力/>
-          <button id=addQuestionBtn>質問を追加</button>
-        </div>
-        <ol id=questionList></ol>
-        <div class=row end>
-          <button id=saveSurveyBtn class=primary>設計を保存</button>
-          <button id=clearSurveyBtn class=ghost>設計をリセット</button>
-        </div>
-      </div>
-    </section>
-    <section id=responder>
-      <h2>回答</h2>
-      <div class=card>
-        <label>回答者名<input id=respondent placeholder=任意/></label>
-        <form id=answerForm></form>
-        <div class=row end>
-          <button id=submitAnswerBtn class=primary>回答を送信</button>
-        </div>
-      </div>
-    </section>
-    <section id=responses>
-      <h2>回答一覧</h2>
-      <div class=card>
-        <div class=row end>
-          <button id=exportCsvBtn>CSV エクスポート</button>
-          <button id=clearResponsesBtn class=ghost>回答を全削除</button>
-        </div>
-        <div class=scroll>
-          <table id=responsesTable>
-            <thead></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-  </main>
-  <script src=app.js></script>
 </body>
 </html>

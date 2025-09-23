@@ -3,98 +3,219 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>anketbox</title>
+  <title>AnketBox Premium - 世界最高のアンケートアプリ</title>
+  <meta name="description" content="AI搭載の次世代アンケートプラットフォーム">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
   <meta name="color-scheme" content="light dark">
-  <meta name="description" content="anketbox - かんたん高機能アンケート作成・収集・エクスポート">
-  <meta property="og:title" content="anketbox">
-  <meta property="og:description" content="かんたん高機能アンケート作成・収集・エクスポート">
+  <meta property="og:title" content="AnketBox Premium">
+  <meta property="og:description" content="世界最高のアンケート作成・分析プラットフォーム">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://masa195.github.io/anketbox/">
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
 </head>
 <body>
-  <header class="app-header container">
-    <div class="brand">
-      <div class="logo">🗳️</div>
-      <h1>anketbox</h1>
+  <div id="notification" class="notification"></div>
+  
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <div class="logo-icon">📊</div>
+          <span>AnketBox Premium</span>
+        </div>
+        <nav class="nav">
+          <a href="#" class="nav-tab active" data-tab="designer">設計</a>
+          <a href="#" class="nav-tab" data-tab="responder">回答</a>
+          <a href="#" class="nav-tab" data-tab="analytics">分析</a>
+          <a href="#" class="nav-tab" data-tab="responses">データ</a>
+        </nav>
+      </div>
     </div>
-    <nav class="tabs" role="tablist" aria-label="Main">
-      <a class="tab is-active" data-tab="designer" role="tab" aria-selected="true" href="#designer">設計</a>
-      <a class="tab" data-tab="responder" role="tab" aria-selected="false" href="#responder">回答</a>
-      <a class="tab" data-tab="responses" role="tab" aria-selected="false" href="#responses">一覧</a>
-    </nav>
   </header>
-  <main class="container app-grid">
-    <section id="designer" class="panel" role="tabpanel">
-      <h2>アンケート設計</h2>
-      <div class="card stack">
-        <label>アンケート名
-          <input id="surveyName" placeholder="例: 顧客満足度 2025"/>
-        </label>
-        <div class="row wrap">
-          <input id="newQuestion" placeholder="質問を入力"/>
-          <select id="newType">
-            <option value="text">短文</option>
-            <option value="textarea">長文</option>
-            <option value="single">単一選択</option>
-            <option value="multi">複数選択</option>
-          </select>
-          <label class="inline"><input type="checkbox" id="newRequired">必須</label>
+  
+  <main class="main">
+    <div class="container">
+      <!-- Designer Panel -->
+      <div id="designer" class="panel active">
+        <h2 class="section-title">🎨 アンケート設計</h2>
+        
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number" id="questionCount">0</div>
+            <div class="stat-label">質問数</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="responseCount">0</div>
+            <div class="stat-label">回答数</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="completionRate">0%</div>
+            <div class="stat-label">完了率</div>
+          </div>
         </div>
-        <div class="row">
-          <input id="newOptions" placeholder="選択肢（カンマ区切り）"/>
-          <button id="addQuestionBtn">質問を追加</button>
-        </div>
-        <ol id="questionList" class="q-list"></ol>
-        <div class="row gap">
-          <button id="jsonExportBtn" type="button">JSON エクスポート</button>
-          <label class="file-btn">
-            JSON インポート
-            <input id="jsonImportInput" type="file" accept="application/json" hidden>
-          </label>
-        </div>
-        <div class="row end">
-          <button id="saveSurveyBtn" class="primary">設計を保存</button>
-          <button id="clearSurveyBtn" class="ghost">設計をリセット</button>
+        
+        <div class="card">
+          <div class="form-group">
+            <label class="label">アンケートタイトル</label>
+            <input id="surveyTitle" class="input" placeholder="例: 2025年度顧客満足度調査" />
+          </div>
+          
+          <div class="form-group">
+            <label class="label">説明文</label>
+            <textarea id="surveyDescription" class="textarea" placeholder="このアンケートの目的や注意事項を記入してください"></textarea>
+          </div>
+          
+          <h3 style="margin: 2rem 0 1rem 0; color: var(--text);">🔧 質問を追加</h3>
+          
+          <div class="flex flex-wrap gap-3" style="margin-bottom: 1rem;">
+            <input id="newQuestion" class="input" style="flex: 2; min-width: 250px;" placeholder="質問文を入力" />
+            <select id="questionType" class="select" style="flex: 1; min-width: 120px;">
+              <option value="text">短文回答</option>
+              <option value="textarea">長文回答</option>
+              <option value="number">数値入力</option>
+              <option value="email">メール</option>
+              <option value="tel">電話番号</option>
+              <option value="date">日付</option>
+              <option value="radio">単一選択</option>
+              <option value="checkbox">複数選択</option>
+              <option value="range">スケール</option>
+              <option value="rating">評価</option>
+            </select>
+          </div>
+          
+          <div class="flex flex-wrap gap-3" style="margin-bottom: 1rem;">
+            <input id="questionOptions" class="input" placeholder="選択肢（カンマ区切り）" style="flex: 2;" />
+            <label class="flex items-center gap-2" style="color: var(--text);">
+              <input type="checkbox" id="questionRequired" />
+              必須項目
+            </label>
+            <button id="addQuestion" class="btn btn-primary">➕ 質問を追加</button>
+          </div>
+          
+          <div class="progress-bar" style="margin: 1rem 0;">
+            <div id="designProgress" class="progress-fill" style="width: 0%;"></div>
+          </div>
+          
+          <ul id="questionList" class="question-list"></ul>
+          
+          <div class="flex justify-between flex-wrap gap-3" style="margin-top: 2rem;">
+            <div class="flex gap-3">
+              <button id="saveDesign" class="btn btn-success">💾 設計を保存</button>
+              <button id="previewSurvey" class="btn btn-secondary">👁️ プレビュー</button>
+            </div>
+            <div class="flex gap-3">
+              <button id="exportJson" class="btn btn-ghost">📤 JSON出力</button>
+              <label class="btn btn-ghost" style="cursor: pointer;">
+                📥 JSON読込
+                <input id="importJson" type="file" accept=".json" style="display: none;" />
+              </label>
+              <button id="clearDesign" class="btn btn-danger">🗑️ リセット</button>
+            </div>
+          </div>
         </div>
       </div>
-    </section>
-
-    <section id="responder" class="panel is-hidden" role="tabpanel">
-      <h2>回答</h2>
-      <div class="card stack">
-        <label>回答者名
-          <input id="respondent" placeholder="任意"/>
-        </label>
-        <form id="answerForm"></form>
-        <div class="row end">
-          <button id="submitAnswerBtn" class="primary" type="button">回答を送信</button>
+      
+      <!-- Responder Panel -->
+      <div id="responder" class="panel">
+        <h2 class="section-title">📝 アンケート回答</h2>
+        
+        <div class="card">
+          <div id="surveyHeader" style="margin-bottom: 2rem;">
+            <h3 id="surveyTitleDisplay" style="font-size: 1.5rem; margin-bottom: 0.5rem;"></h3>
+            <p id="surveyDescriptionDisplay" style="color: var(--text-muted);"></p>
+          </div>
+          
+          <div class="form-group">
+            <label class="label">回答者名（任意）</label>
+            <input id="respondentName" class="input" placeholder="お名前またはニックネーム" />
+          </div>
+          
+          <form id="surveyForm" style="margin: 2rem 0;"></form>
+          
+          <div class="progress-bar" style="margin: 1rem 0;">
+            <div id="responseProgress" class="progress-fill" style="width: 0%;"></div>
+          </div>
+          
+          <div class="flex justify-end gap-3">
+            <button id="saveDraft" class="btn btn-ghost">💾 下書き保存</button>
+            <button id="submitResponse" class="btn btn-primary">🚀 回答を送信</button>
+          </div>
         </div>
       </div>
-    </section>
-
-    <section id="responses" class="panel is-hidden" role="tabpanel">
-      <h2>回答一覧</h2>
-      <div class="card stack">
-        <div class="row end">
-          <button id="exportCsvBtn" type="button">CSV エクスポート</button>
-          <button id="clearResponsesBtn" class="ghost" type="button">回答を全削除</button>
+      
+      <!-- Analytics Panel -->
+      <div id="analytics" class="panel">
+        <h2 class="section-title">📊 分析・レポート</h2>
+        
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number" id="totalResponses">0</div>
+            <div class="stat-label">総回答数</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="avgCompletionTime">0分</div>
+            <div class="stat-label">平均回答時間</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="dropoffRate">0%</div>
+            <div class="stat-label">離脱率</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="satisfactionScore">0.0</div>
+            <div class="stat-label">満足度スコア</div>
+          </div>
         </div>
-        <div class="scroll">
-          <table id="responsesTable">
-            <thead></thead>
-            <tbody></tbody>
-          </table>
+        
+        <div class="card">
+          <h3 style="margin-bottom: 1.5rem;">📈 回答状況グラフ</h3>
+          <canvas id="responseChart" width="800" height="400" style="max-width: 100%; height: auto;"></canvas>
+        </div>
+        
+        <div class="card">
+          <h3 style="margin-bottom: 1.5rem;">📋 詳細分析</h3>
+          <div id="analysisResults"></div>
         </div>
       </div>
-    </section>
+      
+      <!-- Responses Panel -->
+      <div id="responses" class="panel">
+        <h2 class="section-title">📋 回答データ管理</h2>
+        
+        <div class="card">
+          <div class="flex justify-between items-center flex-wrap gap-3" style="margin-bottom: 2rem;">
+            <div class="flex gap-3">
+              <input id="searchResponses" class="input" placeholder="回答を検索..." style="width: 300px;" />
+              <select id="filterBy" class="select">
+                <option value="all">全ての回答</option>
+                <option value="completed">完了済み</option>
+                <option value="draft">下書き</option>
+                <option value="recent">最近の回答</option>
+              </select>
+            </div>
+            <div class="flex gap-3">
+              <button id="exportCsv" class="btn btn-success">📊 CSV出力</button>
+              <button id="exportPdf" class="btn btn-secondary">📄 PDF出力</button>
+              <button id="clearAllResponses" class="btn btn-danger">🗑️ 全削除</button>
+            </div>
+          </div>
+          
+          <div class="table-container">
+            <table id="responsesTable" class="table">
+              <thead></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          
+          <div id="pagination" class="flex justify-center gap-2" style="margin-top: 2rem;"></div>
+        </div>
+      </div>
+    </div>
   </main>
-  <footer class="container app-footer">
-    <small>© 2025 anketbox</small>
+  
+  <footer class="container" style="padding: 2rem 20px; text-align: center; color: var(--text-muted);">
+    <small>© 2025 AnketBox Premium - Powered by AI</small>
   </footer>
-
+  
   <script src="app.js"></script>
-
 </body>
 </html>

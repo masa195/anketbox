@@ -131,37 +131,33 @@ function renderQuestionList() {
 function renderAnswerForm(survey) {
   answerForm.innerHTML = "";
   (survey?.questions || []).forEach((q, i) => {
-    let control;
-    if (q.type === "textarea") {
-      control = createElement("textarea", { id: `q_${i}`, placeholder: "回答" });
-    } else if (q.type === "single") {
-      control = createElement(
-        "div",
-        {},
-        (q.options || []).map((opt, j) =>
-          createElement("label", { class: "inline" }, [
-            createElement("input", { type: "radio", name: `q_${i}`, value: opt }),
-            document.createTextNode(opt),
-          ])
-        )
+    // コンテナ
+    const container = createElement("div");
+
+    if (q.type === "single" || q.type === "multi") {
+      // グループは label の入れ子を避けて fieldset/legend を使う
+      const fs = createElement("fieldset");
+      const lg = createElement("legend", { text: q.label + (q.required ? " *" : "") });
+      fs.appendChild(lg);
+      const inputs = (q.options || []).map((opt) =>
+        createElement("label", { class: "inline" }, [
+          createElement("input", { type: q.type === "single" ? "radio" : "checkbox", name: `q_${i}`, value: opt }),
+          document.createTextNode(opt),
+        ])
       );
-    } else if (q.type === "multi") {
-      control = createElement(
-        "div",
-        {},
-        (q.options || []).map((opt) =>
-          createElement("label", { class: "inline" }, [
-            createElement("input", { type: "checkbox", value: opt, name: `q_${i}` }),
-            document.createTextNode(opt),
-          ])
-        )
-      );
+      inputs.forEach((el) => fs.appendChild(el));
+      container.appendChild(fs);
     } else {
-      control = createElement("input", { id: `q_${i}`, placeholder: "回答" });
+      // 単一フィールドは label でOK（入れ子にならない）
+      const control = q.type === "textarea"
+        ? createElement("textarea", { id: `q_${i}`, placeholder: "回答" })
+        : createElement("input", { id: `q_${i}`, placeholder: "回答" });
+      const label = createElement("label", {}, [document.createTextNode(q.label + (q.required ? " *" : "")), control]);
+      if (q.required) control.setAttribute("required", "true");
+      container.appendChild(label);
     }
-    const label = createElement("label", {}, [document.createTextNode(q.label), control]);
-    if (q.required) label.querySelector("input,textarea")?.setAttribute("required", "true");
-    answerForm.appendChild(label);
+
+    answerForm.appendChild(container);
   });
 }
 

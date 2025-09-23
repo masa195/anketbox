@@ -10,6 +10,8 @@ h1{font-size:28px;margin:16px 0 8px} h2{font-size:18px;margin:24px 0 8px;color:v
 select{padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:#0f1430;color:var(--text)}
 label.inline{display:inline-flex;align-items:center;gap:6px}
 input,button,textarea{font:inherit} input,textarea{flex:1;min-width:0;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:#0f1430;color:var(--text)}
+fieldset{border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin:8px 0}
+legend{color:var(--muted);padding:0 6px}
 button{padding:10px 14px;border-radius:8px;border:1px solid var(--border);background:#151e44;color:var(--text);cursor:pointer}
 button.primary{background:var(--primary);border-color:var(--primary);color:white} button.ghost{background:transparent}
 ol{padding-left:20px} li{margin:4px 0}

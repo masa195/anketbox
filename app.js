@@ -298,6 +298,7 @@ function csvEscape(v) {
   renderQuestionList();
   renderAnswerForm(survey);
   renderResponsesTable(survey, loadJson(STORAGE_RESPONSES, []));
+  initTabs();
 })();
 
 // helpers
@@ -405,6 +406,26 @@ function cryptoRandomId() {
   } catch {
     return Math.random().toString(36).slice(2);
   }
+}
+
+// Tabs
+function initTabs() {
+  const tabs = Array.from(document.querySelectorAll('.tab'));
+  const panels = {
+    designer: document.getElementById('designer'),
+    responder: document.getElementById('responder'),
+    responses: document.getElementById('responses'),
+  };
+  tabs.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabs.forEach(b => { b.classList.remove('is-active'); b.setAttribute('aria-selected','false'); });
+      btn.classList.add('is-active'); btn.setAttribute('aria-selected','true');
+      const key = btn.getAttribute('data-tab');
+      Object.entries(panels).forEach(([k, el]) => {
+        if (k === key) el.classList.remove('is-hidden'); else el.classList.add('is-hidden');
+      });
+    });
+  });
 }
 
 

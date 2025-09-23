@@ -6,15 +6,29 @@
   <title>anketbox</title>
   <link rel="stylesheet" href="style.css">
   <meta name="color-scheme" content="light dark">
+  <meta name="description" content="anketbox - かんたん高機能アンケート作成・収集・エクスポート">
+  <meta property="og:title" content="anketbox">
+  <meta property="og:description" content="かんたん高機能アンケート作成・収集・エクスポート">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://masa195.github.io/anketbox/">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
 </head>
 <body>
-  <header class="container">
-    <h1>anketbox</h1>
+  <header class="app-header container">
+    <div class="brand">
+      <div class="logo">🗳️</div>
+      <h1>anketbox</h1>
+    </div>
+    <nav class="tabs" role="tablist" aria-label="Main">
+      <button class="tab is-active" data-tab="designer" role="tab" aria-selected="true">設計</button>
+      <button class="tab" data-tab="responder" role="tab" aria-selected="false">回答</button>
+      <button class="tab" data-tab="responses" role="tab" aria-selected="false">一覧</button>
+    </nav>
   </header>
-  <main class="container">
-    <section id="designer">
+  <main class="container app-grid">
+    <section id="designer" class="panel" role="tabpanel">
       <h2>アンケート設計</h2>
-      <div class="card">
+      <div class="card stack">
         <label>アンケート名
           <input id="surveyName" placeholder="例: 顧客満足度 2025"/>
         </label>
@@ -47,9 +61,9 @@
       </div>
     </section>
 
-    <section id="responder">
+    <section id="responder" class="panel is-hidden" role="tabpanel">
       <h2>回答</h2>
-      <div class="card">
+      <div class="card stack">
         <label>回答者名
           <input id="respondent" placeholder="任意"/>
         </label>
@@ -60,9 +74,9 @@
       </div>
     </section>
 
-    <section id="responses">
+    <section id="responses" class="panel is-hidden" role="tabpanel">
       <h2>回答一覧</h2>
-      <div class="card">
+      <div class="card stack">
         <div class="row end">
           <button id="exportCsvBtn" type="button">CSV エクスポート</button>
           <button id="clearResponsesBtn" class="ghost" type="button">回答を全削除</button>
@@ -76,6 +90,9 @@
       </div>
     </section>
   </main>
+  <footer class="container app-footer">
+    <small>© 2025 anketbox</small>
+  </footer>
 
   <script src="app.js"></script>
 

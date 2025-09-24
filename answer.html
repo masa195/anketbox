@@ -63,6 +63,43 @@
           answerForm.appendChild(create("label", {}, [document.createTextNode(q.label + (q.required?" *":"")), control]));
         }
       });
+      attachAutoAdvance();
+    }
+
+    function attachAutoAdvance(){
+      const blocks = Array.from(answerForm.children);
+      function scrollToNext(fromEl){
+        let next = fromEl.nextElementSibling;
+        while(next && !(next.tagName === 'FIELDSET' || next.tagName === 'LABEL')){
+          next = next.nextElementSibling;
+        }
+        if(next){
+          next.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          const input = next.querySelector('input, textarea, select');
+          if(input && input.focus) setTimeout(()=> input.focus(), 250);
+        } else {
+          // 最後なら送信ボタンへ
+          setTimeout(()=> submitAnswerBtn.focus(), 200);
+        }
+      }
+      // ラジオ選択で次へ
+      answerForm.querySelectorAll('input[type="radio"]').forEach(r => {
+        r.addEventListener('change', (e)=>{
+          const group = e.target.closest('fieldset') || e.target.closest('label');
+          if(group) scrollToNext(group);
+        });
+      });
+      // テキスト/テキストエリアでEnter押下時に次へ（複数行はShift+Enterで改行）
+      answerForm.querySelectorAll('input[type="text"], textarea').forEach(el => {
+        el.addEventListener('keydown', (e)=>{
+          if(e.key === 'Enter' && !(el.tagName === 'TEXTAREA' && e.shiftKey)){
+            e.preventDefault();
+            const holder = el.closest('label') || el;
+            scrollToNext(holder);
+          }
+        });
+      });
+      // チェックボックスは明示操作が多いのでスキップ（必要なら変更で進むに変更可能）
     }
 
     submitAnswerBtn.addEventListener("click", ()=>{

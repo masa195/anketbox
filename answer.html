@@ -84,6 +84,8 @@
         const list = loadJson(STORAGE_RESPONSES, []); list.push(rec); saveJson(STORAGE_RESPONSES, list);
         alert("回答を保存しました。ありがとうございました。");
         answerForm.reset(); respondentInput.value="";
+        // 保存後は一覧ページへ遷移
+        setTimeout(()=>{ location.href = './list.html'; }, 300);
       } catch(e){ alert(e.message||String(e)); }
     });
 

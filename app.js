@@ -263,6 +263,8 @@ class SurveyDesigner {
     storage.set(STORAGE.SURVEY, currentSurvey);
     this.updatePreview();
     showNotification('アンケートを保存しました！', 'success');
+    // 保存後は回答タブへ進む
+    switchTab('responder');
   }
   loadSurvey() {
     const saved = storage.get(STORAGE.SURVEY);
